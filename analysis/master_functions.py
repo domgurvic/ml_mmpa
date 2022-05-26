@@ -58,43 +58,6 @@ def split_transition(df, col):
     return df
 
 
-def stat_it(it):
-    hts_pairs = it
-    hts_smirk_repearts = hts_pairs.smirks.value_counts().index.tolist()
-    hts_smirk_repearts_values = hts_pairs.smirks.value_counts().tolist()
-
-    repeats_filtered = hts_smirk_repearts
-    repeats_filtered=[y for x, y in zip(hts_smirk_repearts_values, hts_smirk_repearts) if x >= 3]
-
-    #for i in [2, 5, 10, 20, 100]:
-    #    print('No. of unique pairs with same transform >= {} (% of all): {} ({:.3}%)'.format(i, len([x for x in hts_smirk_repearts_values if x >=i]), (len([x for x in hts_smirk_repearts_values if x >=i])/len(hts_pairs))*100))
-
-    # Let's pick one transformation and do some maths:
-
-    res = pd.DataFrame( columns = ['smirks', 'dof', 'power' , 'normality' ,'t-stat','w-stat', 'p-val (t-test)', 'p-val (w-test)', 'measurement_delta', 'std',  'sem'])
-
-    for i in trange(len(repeats_filtered)):
-
-        pair_eg = hts_pairs[hts_pairs['smirks'] == repeats_filtered[i]].reset_index(drop=True)
-        sd_d=pair_eg.measurement_delta.std()
-        sem= pair_eg.measurement_delta.sem()
-        avg_diff= pair_eg.measurement_B.mean() - pair_eg.measurement_A.mean()
-
-        cohens_d=avg_diff/sd_d
-
-        t, p_2 = stats.ttest_rel(pair_eg.measurement_B,pair_eg.measurement_A) #Two-sided p-value / need only one side?
-        w, p_1 = stats.wilcoxon(pair_eg.measurement_B,pair_eg.measurement_A) # Wilcoxon signed ranked test
-
-        dof = len(pair_eg)-1
-        n=len(pair_eg)
-        new_row = {'smirks':hts_smirk_repearts[i], 'dof':dof,'t-stat':t, \
-                   'p-val (t-test)':p_2, 'w-stat': w, 'p-val (w-test)':p_1, 'measurement_delta':avg_diff, 'std':sd_d,  'sem':sem, }
-
-        res = res.append(new_row, ignore_index=True) #append row to the dataframe
-
-
-    return res
-
 def stat_it_2(it):
     
     hts_pairs = it
@@ -797,76 +760,6 @@ def generate_mols_for_substructures():
 
     return mol_substructures,  name_substructure
 
-
-def calculate_fractions_mk2(df):
-    # imporement error catching
-    
-    # Generate substructure mols and names
-    
-    mol_substructures, name_substructure = generate_mols_for_substructures()
-    
-    name_substructure = name_substructure + ['smirks', 'target']
-    
-    # Comapre left hand side
-    
-    frame_left=pd.DataFrame(columns=name_substructure)
-
-    print('Calcualting LHS matches')
-
-    for num, target in tqdm(enumerate(df.LHS.values)):
-        #grab structure
-        frame_temp=pd.DataFrame(0, index=range(1), columns=name_substructure)
-        #turn it into mol 
-        try:
-            mol_target=Chem.MolFromSmarts(target)
-            mol_target.UpdatePropertyCache()
-            mol_target = Chem.AddHs(mol_target)
-        except TypeError:
-            print('Error: ', num, target)
-            
-            
-        for index, sub in enumerate(mol_substructures):
-            if mol_target.HasSubstructMatch(sub):
-                #print('yeah', smarts_names[index])
-                frame_temp[name_substructure[index]] = [1]
-                frame_temp['smirks'] = df.transition.values[num]
-                frame_temp['target'] = df.avg_pred_diff.values[num]
-                
-        frame_left = frame_left.append(frame_temp)
-
-
-    # compare right hand side
-    
-    frame_right=pd.DataFrame(columns=name_substructure)
-
-    print('Calcualting RHS matches')
-    
-    for num, target in enumerate(df.RHS.values):
-
-        frame_temp=pd.DataFrame(0, index=range(1), columns=name_substructure)
-        try:
-            mol_target=Chem.MolFromSmarts(target)
-            mol_target.UpdatePropertyCache()
-            mol_target = Chem.AddHs(mol_target)
-        except TypeError:
-            print('Error Right', num, target)
-        for index, sub in enumerate(mol_substructures):
-            if mol_target.HasSubstructMatch(sub):
-                #print('yeah', smarts_names[index])
-                frame_temp[name_substructure[index]] = [1]
-                frame_temp['smirks'] = df.transition.values[num]
-                frame_temp['target'] = df.avg_pred_diff.values[num]
-
-        frame_right = frame_right.append(frame_temp)
-        
-    diff = frame_right.iloc[:,:-2] - frame_left.iloc[:,:-2] 
-    
-    diff['smirks'] = frame_left['smirks']
-    diff['target'] = frame_left['target']
-
-    diff=diff.reset_index(drop=True)
-
-    return diff, frame_left.reset_index(drop=True), frame_right.reset_index(drop=True)
 
 def find_sig_feats_mk2(l_feats, r_feats, p_val):
     df_sig_feats=pd.DataFrame(columns=l_feats.columns)
