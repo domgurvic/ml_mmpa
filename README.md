@@ -33,7 +33,7 @@ Consisting of: SMILES column (assumed first), property column (assumed second).
 To initialise the calculation of matched molecular pair analysis, run: 
 
 ```
-master_mmpa.sh <path>  <string>
+master_mmpa.sh <path> <string>
 ```
 
 Where <path> is the .csv SMILES file and <string> will be the name of file produced by mmpa in the format: string_final.csv
