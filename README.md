@@ -39,3 +39,5 @@ master_mmpa.sh <path> <string>
 Where <path> is the .csv SMILES file and <string> will be the name of file produced by mmpa in the format: string_final.csv
 
 
+That will produce output in the form of: <string>_final_index.csv which is an output of transforms and related property change
+
