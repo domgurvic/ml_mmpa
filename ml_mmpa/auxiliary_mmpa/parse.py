@@ -32,17 +32,17 @@ def mmpa(smiles_file_location, name):
 
     print('first columns should be smiles: ', file.columns[0])
 
-    first_file = file[[file.columns[0], 'ID']].to_csv(name_smi,  sep = ' ', index=False, header=False)
+    first_file = file[[file.columns[0], 'ID']].to_csv('out/' + name_smi,  sep = ' ', index=False, header=False)
     
     print('Second column should be property: ', file.columns[1])
 
 
     second_file = file[['ID', file.columns[1]]]
     
-    print('saving property file: ', name + '_property' + '.csv')
+    print('saving property file: ','out/' +  name + '_property' + '.csv')
 
 
-    second_file.to_csv(name + '_property' + '.csv',  sep = ' ', index = False)
+    second_file.to_csv('out/' + name + '_property' + '.csv',  sep = ' ', index = False)
    
 #    os.system('echo here  ${name_frag}')
 
