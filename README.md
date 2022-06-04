@@ -41,3 +41,7 @@ Where <path> is the .csv SMILES file and <string> will be the name of file produ
 
 That will produce output in the form of: <string>_final_index.csv which is an output of transforms and related property change
 
+
+Which iwll be saved in the 'out' folder.
+
+Next steps are to take the output and calculate statistical significance for every unique transform involved.
