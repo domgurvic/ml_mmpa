@@ -48,6 +48,8 @@ def clean_mmpa_pairs_len(mmpa_df):
                      , 'fail', 'pass') # compare lengths of heavy atoms
         
         mmpa_df = mmpa_df.drop(temp[temp['len_check']=='fail'].index) # drop index that failed length check
+        
+        print('Initial number of transofrms: {} \nNumber fo transforms disqualified based on length discrepancy: {} \nRemaining number of transforms: {}'.format(len(temp[temp['len_check']=='fail']) +  len(mmpa_df) , len(temp[temp['len_check']=='fail']), len(mmpa_df)))
         # return temp to debug
     return mmpa_df # retun mmpa dataframe without len_check == fail
 
@@ -69,7 +71,7 @@ def stat_it_2(it):
     
     res_arr=[]
     
-    print(len(repeats_filtered))
+    print('Number of unique transforms: {} \nProcessing transforms:...\n '.format(len(repeats_filtered)))
 
     for i in range(len(repeats_filtered)):
 
@@ -82,23 +84,26 @@ def stat_it_2(it):
 
         res_arr.append(new_row)
         
-        if i % 1000 == 0:
+        if i % 1000 == 0 and i != 0:
             print(i)
-
+    print('done!')
     return pd.DataFrame(res_arr, columns = ['smirks', 'dof' ,'t-stat', 'p-val (t-test)', 'measurement_delta', 'std',  'sem'])
 
 
-def zero_in(dataframe, pos=True):
+def zero_in(dataframe,cutoff, pos_only=True):
     res = dataframe
     
-    if pos==True:
+    if pos_only==True:
         res_t_pos = res[res['t-stat']>0].reset_index(drop=True) # positive change
     else:
         res_t_pos=res
-    res_t_pos_p_pos = res_t_pos[res_t_pos['p-val (t-test)']<0.05] # significant change
+        
+    res_t_pos_p_pos = res_t_pos[res_t_pos['p-val (t-test)']<cutoff] # significant change
     
     res_pos_t_sorted = res_t_pos_p_pos.sort_values(by='measurement_delta', ascending=False).reset_index(drop=True)
-
+    
+    print('Number of unique transforms where p-val < {} is {}'.format(cutoff, len(res_pos_t_sorted)))
+    
     return res_pos_t_sorted
 
 

@@ -45,3 +45,5 @@ That will produce output in the form of: <string>_final_index.csv which is an ou
 Which iwll be saved in the 'out' folder.
 
 Next steps are to take the output and calculate statistical significance for every unique transform involved.
+
+Example is done in test jupyter file 
