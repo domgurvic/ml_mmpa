@@ -1,6 +1,7 @@
 import sys
-sys.path.append("/homes/dgurvic/software/miniconda3/envs/jupt_test/lib/python3.7/site-packages/")
+import os
 
+sys.path.append("/homes/dgurvic/software/miniconda3/envs/jupt_test/lib/python3.7/site-packages/")
 sys.path.append("~/test4/software/miniconda3/envs/jupt_test/lib/python3.7/site-packages/")
 
 import pandas as pd
@@ -1048,7 +1049,7 @@ def calculate_fractions_single_mk4(df):
 
 def new_smarts():
     print(os.getcwd())
-    func_groups=pd.read_csv('fg_smarts.csv')
+    func_groups=pd.read_csv('ml_mmpa/fg_smarts.csv')
     
         #fetch all substructure definitions and calculate mosl for them
     print('Generating molecular objects from pre-defined substructures')
@@ -1087,7 +1088,7 @@ def calculate_fractions_mk5(df):
             mol_target_left=Chem.MolFromSmarts(df.LHS.values[index])
             mol_target_left.UpdatePropertyCache()
             mol_target_left = Chem.AddHs(mol_target_left)
-            Chem.SanitizeMol(mol_target_right)
+            Chem.SanitizeMol(mol_target_left)
         except TypeError:
             print('Error: ', index, target)
 
