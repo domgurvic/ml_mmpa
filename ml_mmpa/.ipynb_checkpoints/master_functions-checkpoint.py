@@ -103,6 +103,7 @@ def zero_in(dataframe,cutoff, pos_only=True):
     res_pos_t_sorted = res_t_pos_p_pos.sort_values(by='measurement_delta', ascending=False).reset_index(drop=True)
     
     print('Number of unique transforms where p-val < {} is {}'.format(cutoff, len(res_pos_t_sorted)))
+    print('Split between {} positive transforms and {} negative transforms'.format(len(res_t_pos_p_pos[res_t_pos_p_pos['t-stat'] > 0]), len(res_t_pos_p_pos[res_t_pos_p_pos['t-stat'] < 0])))
     
     return res_pos_t_sorted
 
@@ -1002,7 +1003,7 @@ def calculate_fractions_mk4(df):
 
     return diff.reset_index(drop=True), frame_left_df.reset_index(drop=True), frame_right_df.reset_index(drop=True)
 
-def calculate_fractions_singel_mk4(df):
+def calculate_fractions_single_mk4(df):
 
     mol_substructures, name_substructure = generate_mols_for_substructures()
 
@@ -1046,6 +1047,7 @@ def calculate_fractions_singel_mk4(df):
 
 
 def new_smarts():
+    print(os.getcwd())
     func_groups=pd.read_csv('fg_smarts.csv')
     
         #fetch all substructure definitions and calculate mosl for them
