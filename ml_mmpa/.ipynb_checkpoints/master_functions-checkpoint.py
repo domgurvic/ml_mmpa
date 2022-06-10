@@ -1086,19 +1086,19 @@ def calculate_fractions_mk5(df):
 
         #turn it into mol 
         try:
-            mol_target_left=Chem.MolFromSmarts(df.LHS.values[index] ,sanitize=False)
+            mol_target_left=Chem.MolFromSmarts(df.LHS.values[index])
             mol_target_left.UpdatePropertyCache()
             mol_target_left = Chem.AddHs(mol_target_left)
             Chem.SanitizeMol(mol_target_left)
-        except TypeError:
+        except Chem.KekulizeException:
             print('Error: ', index, target)
 
         try:
-            mol_target_right=Chem.MolFromSmarts(df.RHS.values[index],sanitize=False)
+            mol_target_right=Chem.MolFromSmarts(df.RHS.values[index])
             mol_target_right.UpdatePropertyCache()
             mol_target_right = Chem.AddHs(mol_target_right)
             Chem.SanitizeMol(mol_target_right)
-        except TypeError:
+        except Chem.KekulizeException:
             print('Error: ', index, target)    
 
         if type(mol_target_right) != Chem.rdchem.Mol or type(mol_target_left) != Chem.rdchem.Mol:
